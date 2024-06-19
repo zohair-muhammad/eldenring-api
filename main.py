@@ -2,9 +2,8 @@ import json
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font as tkfont
-import io
 from PIL import ImageTk, Image
-import urllib.request
+
 
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
