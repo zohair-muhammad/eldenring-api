@@ -2,8 +2,9 @@ import json
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font as tkfont
-import customtkinter
-
+import io
+from PIL import ImageTk, Image
+import urllib.request
 
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -41,6 +42,7 @@ class SampleApp(tk.Tk):
 
 
 class StartPage(tk.Frame):
+    # Start page that directs user to one of three main pages
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -66,6 +68,7 @@ class PageOne(tk.Frame):
         label = tk.Label(self, text="Weapons", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
+        # List of weapons retrieved from json file for drop down list
         _list = []
         data_file = open('api/public/data/weapons.json')
         data = json.load(data_file)
@@ -79,6 +82,7 @@ class PageOne(tk.Frame):
         _COMBOBOX = ttk.Combobox(self, values=_list, textvariable=_var)
         _COMBOBOX.pack()
 
+        # Weapon name is retrieved from selection
         def on_select(event):
             global weapon_name
             weapon_name = ""
@@ -87,29 +91,36 @@ class PageOne(tk.Frame):
 
         _COMBOBOX.bind("<<ComboboxSelected>>", on_select)
 
+        #Open a new page for the selected weapon
         def open_weapon_page():
             global weapon_name
             newWindow = tk.Toplevel(self)
 
-            # sets the title of the
-            # Toplevel widget
             newWindow.title(weapon_name)
 
-            # sets the geometry of toplevel
-            newWindow.geometry("500x500")
+            newWindow.geometry("900x500")
 
-            # A Label widget to show in toplevel
             label = tk.Label(newWindow, text=weapon_name, font=controller.title_font)
             label.pack(side="top", fill="x", pady=10)
             d = ""
+            link = ""
 
             for key in data:
                 for v in key:
                     if v == 'name' and key[v] == weapon_name:
                         d = key['description']
+                        link = 'resources/images/weapons/' + key['id'] + '.png'
 
-            desc = tk.Label(newWindow, text = d, wraplength=500, justify="center")
+                        break
+
+            desc = tk.Label(newWindow, text = d, wraplength=500, justify="center", compound='top')
             desc.pack()
+
+            img = ImageTk.PhotoImage(Image.open(link))
+            imlab = tk.Label(newWindow, image=img)
+            imlab.pack()
+            newWindow.mainloop()
+
         sbutton = tk.Button(self, text="Submit",
                            command = open_weapon_page)
 
@@ -125,18 +136,129 @@ class PageTwo(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="This is page 2", font=controller.title_font)
+        label = tk.Label(self, text="Sorceries", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
+
+        _list = []
+        data_file = open('api/public/data/sorceries.json')
+        data = json.load(data_file)
+
+        for key in data:
+            for v in key:
+                if v == 'name':
+                    _list.append(key[v])
+
+        _var = tk.StringVar()
+        _COMBOBOX = ttk.Combobox(self, values=_list, textvariable=_var)
+        _COMBOBOX.pack()
+
+        def on_select(event):
+            global weapon_name
+            weapon_name = ""
+            weapon_name = _var.get()
+
+        _COMBOBOX.bind("<<ComboboxSelected>>", on_select)
+
+        # Open a new page for the selected weapon
+        def open_weapon_page():
+            global weapon_name
+            newWindow = tk.Toplevel(self)
+
+            newWindow.title(weapon_name)
+
+            newWindow.geometry("900x500")
+
+            label = tk.Label(newWindow, text=weapon_name, font=controller.title_font)
+            label.pack(side="top", fill="x", pady=10)
+            d = ""
+            link = ""
+
+            for key in data:
+                for v in key:
+                    if v == 'name' and key[v] == weapon_name:
+                        d = key['description']
+                        link = 'resources/images/sorceries/' + key['id'] + '.png'
+
+                        break
+
+            desc = tk.Label(newWindow, text=d, wraplength=500, justify="center", compound='top')
+            desc.pack()
+
+            img = ImageTk.PhotoImage(Image.open(link))
+            imlab = tk.Label(newWindow, image=img)
+            imlab.pack()
+            newWindow.mainloop()
+
+        sbutton = tk.Button(self, text="Submit",
+                            command=open_weapon_page)
+
+        sbutton.pack()
         button = tk.Button(self, text="Go to the start page",
                            command=lambda: controller.show_frame("StartPage"))
         button.pack()
+        data_file.close()
 
 class PageThree(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="This is page 3", font=controller.title_font)
+        label = tk.Label(self, text="Incantations", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
+
+        _list = []
+        data_file = open('api/public/data/incantations.json')
+        data = json.load(data_file)
+
+        for key in data:
+            for v in key:
+                if v == 'name':
+                    _list.append(key[v])
+
+        _var = tk.StringVar()
+        _COMBOBOX = ttk.Combobox(self, values=_list, textvariable=_var)
+        _COMBOBOX.pack()
+
+        def on_select(event):
+            global weapon_name
+            weapon_name = ""
+            weapon_name = _var.get()
+
+        _COMBOBOX.bind("<<ComboboxSelected>>", on_select)
+
+        # Open a new page for the selected weapon
+        def open_weapon_page():
+            global weapon_name
+            newWindow = tk.Toplevel(self)
+
+            newWindow.title(weapon_name)
+
+            newWindow.geometry("900x500")
+
+            label = tk.Label(newWindow, text=weapon_name, font=controller.title_font)
+            label.pack(side="top", fill="x", pady=10)
+            d = ""
+            link = ""
+
+            for key in data:
+                for v in key:
+                    if v == 'name' and key[v] == weapon_name:
+                        d = key['description']
+                        link = 'resources/images/incantations/' + key['id'] + '.png'
+
+                        break
+
+            desc = tk.Label(newWindow, text=d, wraplength=500, justify="center", compound='top')
+            desc.pack()
+
+            img = ImageTk.PhotoImage(Image.open(link))
+            imlab = tk.Label(newWindow, image=img)
+            imlab.pack()
+            newWindow.mainloop()
+
+        sbutton = tk.Button(self, text="Submit",
+                            command=open_weapon_page)
+
+        sbutton.pack()
         button = tk.Button(self, text="Go to the start page",
                            command=lambda: controller.show_frame("StartPage"))
         button.pack()
